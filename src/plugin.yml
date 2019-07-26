@@ -1,0 +1,7 @@
+main: timber.core.Plugin
+name: Timber
+version: 1.0.1
+website: http://aurilisdev.com/
+author: aurilisdev
+api-version: 1.13
+description: With this plugin you can cut down an entire tree by breaking the bottom part!
