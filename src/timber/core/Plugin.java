@@ -3,7 +3,9 @@ package timber.core;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,19 +15,33 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Plugin extends JavaPlugin implements Listener {
-	@SuppressWarnings("deprecation")
-	public static HashSet<Material>	logMaterials	= new HashSet<>(
-			Arrays.asList(Material.LEGACY_LOG, Material.LEGACY_LOG_2, Material.ACACIA_LOG, Material.BIRCH_LOG, Material.DARK_OAK_LOG, Material.JUNGLE_LOG, Material.OAK_LOG, Material.SPRUCE_LOG));
-	public static HashSet<Material>	axeMaterials	= new HashSet<>(Arrays.asList(Material.DIAMOND_AXE, Material.GOLDEN_AXE, Material.IRON_AXE, Material.STONE_AXE, Material.WOODEN_AXE));
+	public static HashSet<Material>	logMaterials;
+	public static HashSet<Material>	axeMaterials;
+
+	public void initializeHashSets()
+	{
+		String version = Bukkit.getVersion();
+		if (version.contains("1.13") || version.contains("1.14"))
+		{
+			logMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("ACACIA_LOG"), Material.getMaterial("BIRCH_LOG"), Material.getMaterial("DARK_OAK_LOG"), Material.getMaterial("JUNGLE_LOG"), Material.getMaterial("OAK_LOG"),
+					Material.getMaterial("SPRUCE_LOG")));
+			axeMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("DIAMOND_AXE"), Material.getMaterial("GOLDEN_AXE"), Material.getMaterial("IRON_AXE"), Material.getMaterial("STONE_AXE"), Material.getMaterial("WOODEN_AXE")));
+		} else
+		{
+			logMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("LOG"), Material.getMaterial("LOG_2")));
+			axeMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("DIAMOND_AXE"), Material.getMaterial("GOLD_AXE"), Material.getMaterial("IRON_AXE"), Material.getMaterial("STONE_AXE"), Material.getMaterial("WOOD_AXE")));
+		}
+		Bukkit.getLogger().log(Level.INFO, "Timber Log Materials: " + logMaterials.toString());
+		Bukkit.getLogger().log(Level.INFO, "Timber Axe Materials: " + axeMaterials.toString());
+	}
 
 	@Override
 	public void onEnable()
 	{
+		initializeHashSets();
 		getServer().getPluginManager().registerEvents(this, this);
 	}
 
@@ -37,7 +53,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		{
 			if (!player.hasPermission("timber.disallow") || player.isOp())
 			{
-				ItemStack handStack = player.getInventory().getItemInMainHand();
+				@SuppressWarnings("deprecation")
+				ItemStack handStack = player.getItemInHand();
 				if (axeMaterials.contains(handStack.getType()))
 				{
 					Block block = e.getBlock();
@@ -50,6 +67,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void cutDownTree(Location location, ItemStack handStack)
 	{
 		LinkedList<Block> blocks = new LinkedList<>();
@@ -71,17 +89,11 @@ public class Plugin extends JavaPlugin implements Listener {
 		{
 			if (block.breakNaturally(handStack))
 			{
-				ItemMeta meta = handStack.getItemMeta();
-				if (meta != null)
+				handStack.setDurability((short) (handStack.getDurability() + 1));
+				if (handStack.getType().getMaxDurability() == handStack.getDurability())
 				{
-					Damageable damage = (Damageable) meta;
-					damage.setDamage(damage.getDamage() + 1);
-					handStack.setItemMeta(meta);
-					if (handStack.getType().getMaxDurability() == damage.getDamage())
-					{
-						handStack.setType(Material.AIR);
-						return;
-					}
+					handStack.setType(Material.AIR);
+					return;
 				}
 			}
 		}
