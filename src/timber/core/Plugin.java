@@ -18,21 +18,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Plugin extends JavaPlugin implements Listener {
-	public static HashSet<Material>	logMaterials;
-	public static HashSet<Material>	axeMaterials;
+	public static HashSet<String>	validLogMaterials	= new HashSet<>(Arrays.asList("LOG", "LOG_2", "LEGACY_LOG", "LEGACY_LOG_2", "ACACIA_LOG", "BIRCH_LOG", "DARK_OAK_LOG", "JUNGLE_LOG", "OAK_LOG", "SPRUCE_LOG"));
+	public static HashSet<String>	validAxeMaterials	= new HashSet<>(Arrays.asList("DIAMOND_AXE", "GOLDEN_AXE", "IRON_AXE", "STONE_AXE", "WOODEN_AXE", "GOLD_AXE", "WOOD_AXE"));
+	public static HashSet<Material>	logMaterials		= new HashSet<>();
+	public static HashSet<Material>	axeMaterials		= new HashSet<>();
 
 	public void initializeHashSets()
 	{
-		String version = Bukkit.getVersion();
-		if (version.contains("1.13") || version.contains("1.14"))
+		for (Material material : Material.values())
 		{
-			logMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("ACACIA_LOG"), Material.getMaterial("BIRCH_LOG"), Material.getMaterial("DARK_OAK_LOG"), Material.getMaterial("JUNGLE_LOG"), Material.getMaterial("OAK_LOG"),
-					Material.getMaterial("SPRUCE_LOG")));
-			axeMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("DIAMOND_AXE"), Material.getMaterial("GOLDEN_AXE"), Material.getMaterial("IRON_AXE"), Material.getMaterial("STONE_AXE"), Material.getMaterial("WOODEN_AXE")));
-		} else
-		{
-			logMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("LOG"), Material.getMaterial("LOG_2")));
-			axeMaterials = new HashSet<>(Arrays.asList(Material.getMaterial("DIAMOND_AXE"), Material.getMaterial("GOLD_AXE"), Material.getMaterial("IRON_AXE"), Material.getMaterial("STONE_AXE"), Material.getMaterial("WOOD_AXE")));
+			if (validLogMaterials.contains(material.name()))
+			{
+				logMaterials.add(material);
+			}
+			if (validAxeMaterials.contains(material.name()))
+			{
+				axeMaterials.add(material);
+			}
 		}
 		Bukkit.getLogger().log(Level.INFO, "Timber Log Materials: " + logMaterials.toString());
 		Bukkit.getLogger().log(Level.INFO, "Timber Axe Materials: " + axeMaterials.toString());
