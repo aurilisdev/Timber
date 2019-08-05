@@ -12,11 +12,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@SuppressWarnings("deprecation")
 public class Plugin extends JavaPlugin implements Listener {
 	public static HashSet<String>	validLogMaterials	= new HashSet<>(Arrays.asList("LOG", "LOG_2", "LEGACY_LOG", "LEGACY_LOG_2", "ACACIA_LOG", "BIRCH_LOG", "DARK_OAK_LOG", "JUNGLE_LOG", "OAK_LOG", "SPRUCE_LOG"));
 	public static HashSet<String>	validAxeMaterials	= new HashSet<>(Arrays.asList("DIAMOND_AXE", "GOLDEN_AXE", "IRON_AXE", "STONE_AXE", "WOODEN_AXE", "GOLD_AXE", "WOOD_AXE"));
@@ -55,7 +57,6 @@ public class Plugin extends JavaPlugin implements Listener {
 		{
 			if (!player.hasPermission("timber.disallow") || player.isOp())
 			{
-				@SuppressWarnings("deprecation")
 				ItemStack handStack = player.getItemInHand();
 				if (axeMaterials.contains(handStack.getType()))
 				{
@@ -69,7 +70,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.MONITOR)
 	private void cutDownTree(Location location, ItemStack handStack)
 	{
 		LinkedList<Block> blocks = new LinkedList<>();
