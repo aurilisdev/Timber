@@ -20,10 +20,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("deprecation")
 public class Plugin extends JavaPlugin implements Listener {
-	public static HashSet<String>	validLogMaterials	= new HashSet<>(Arrays.asList("LOG", "LOG_2", "LEGACY_LOG", "LEGACY_LOG_2", "ACACIA_LOG", "BIRCH_LOG", "DARK_OAK_LOG", "JUNGLE_LOG", "OAK_LOG", "SPRUCE_LOG"));
-	public static HashSet<String>	validAxeMaterials	= new HashSet<>(Arrays.asList("DIAMOND_AXE", "GOLDEN_AXE", "IRON_AXE", "STONE_AXE", "WOODEN_AXE", "GOLD_AXE", "WOOD_AXE"));
-	public static HashSet<Material>	logMaterials		= new HashSet<>();
-	public static HashSet<Material>	axeMaterials		= new HashSet<>();
+	public static HashSet<String>	validLogMaterials		= new HashSet<>(Arrays.asList("LOG", "LOG_2", "LEGACY_LOG", "LEGACY_LOG_2", "ACACIA_LOG", "BIRCH_LOG", "DARK_OAK_LOG", "JUNGLE_LOG", "OAK_LOG", "SPRUCE_LOG"));
+	public static HashSet<String>	validAxeMaterials		= new HashSet<>(Arrays.asList("DIAMOND_AXE", "GOLDEN_AXE", "IRON_AXE", "STONE_AXE", "WOODEN_AXE", "GOLD_AXE", "WOOD_AXE"));
+	public static HashSet<Material>	logMaterials			= new HashSet<>();
+	public static HashSet<Material>	axeMaterials			= new HashSet<>();
+	public static boolean			reverseSneakFunction	= false;
 
 	public void initializeHashSets()
 	{
@@ -45,15 +46,22 @@ public class Plugin extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable()
 	{
+		saveDefaultConfig();
+		reverseSneakFunction = getConfig().getBoolean("reverseSneakFunction");
 		initializeHashSets();
 		getServer().getPluginManager().registerEvents(this, this);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent e)
 	{
 		Player player = e.getPlayer();
-		if (!player.isSneaking())
+		boolean check = !player.isSneaking();
+		if (reverseSneakFunction)
+		{
+			check = !check;
+		}
+		if (check)
 		{
 			if (!player.hasPermission("timber.disallow") || player.isOp())
 			{
@@ -70,7 +78,6 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
 	private void cutDownTree(Location location, ItemStack handStack)
 	{
 		LinkedList<Block> blocks = new LinkedList<>();

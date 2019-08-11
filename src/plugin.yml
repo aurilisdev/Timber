@@ -1,6 +1,6 @@
 main: timber.core.Plugin
 name: Timber
-version: 1.0.4
+version: 1.0.5
 website: http://aurilisdev.com/
 author: aurilisdev
 api-version: 1.13
