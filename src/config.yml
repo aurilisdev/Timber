@@ -1,1 +1,20 @@
 reverseSneakFunction: false
+validLogMaterials:
+  - LOG
+  - LOG_2
+  - LEGACY_LOG
+  - LEGACY_LOG_2
+  - ACACIA_LOG
+  - BIRCH_LOG
+  - DARK_OAK_LOG
+  - JUNGLE_LOG
+  - OAK_LOG
+  - SPRUCE_LOG
+validAxeMaterials:
+  - DIAMOND_AXE
+  - GOLDEN_AXE
+  - GOLD_AXE
+  - IRON_AXE
+  - STONE_AXE
+  - WOODEN_AXE
+  - WOOD_AXE
