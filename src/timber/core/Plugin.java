@@ -48,6 +48,8 @@ public class Plugin extends JavaPlugin implements Listener {
 	{
 		saveDefaultConfig();
 		reverseSneakFunction = getConfig().getBoolean("reverseSneakFunction");
+		validLogMaterials = new HashSet<>(getConfig().getStringList("validLogMaterials"));
+		validAxeMaterials = new HashSet<>(getConfig().getStringList("validAxeMaterials"));
 		initializeHashSets();
 		getServer().getPluginManager().registerEvents(this, this);
 	}
@@ -56,7 +58,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	public void onBlockBreak(BlockBreakEvent e)
 	{
 		Player player = e.getPlayer();
-		boolean check = reverseSneakFunction ? player.isSneaking() : !player.isSneaking();
+		boolean check = reverseSneakFunction == player.isSneaking();
 		if (check)
 		{
 			if (!player.hasPermission("timber.disallow") || player.isOp())
