@@ -63,7 +63,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		{
 			if (!player.hasPermission("timber.disallow") || player.isOp())
 			{
-				ItemStack handStack = player.getItemInHand();
+				ItemStack handStack = player.getInventory().getItemInMainHand();
 				if (axeMaterials.contains(handStack.getType()))
 				{
 					Block block = e.getBlock();
@@ -81,17 +81,17 @@ public class Plugin extends JavaPlugin implements Listener {
 		LinkedList<Block> blocks = new LinkedList<>();
 		for (int i = location.getBlockY(); i < location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ());)
 		{
-			Location l = location.add(0.0D, 1.0D, 0.0D);
-			Block block = l.getBlock();
-			if (logMaterials.contains(block.getType()))
-			{
-				blocks.add(l.getBlock());
-				l = null;
-				i++;
-			} else
-			{
-				break;
+			Block found = null;
+			for (double x = location.getBlockX() - 1; x < location.getBlockX() + 1 && found == null; x++) {
+				for (double z = location.getBlockZ() - 1; z < location.getBlockZ() + 1 && found == null; z++) {
+					Location l = location.add(x, 1.0D, z);
+					Block block = l.getBlock();
+					if (logMaterials.contains(block.getType())) found = block;
+				}
 			}
+			
+			if (found != null) blocks.add(found);
+			else break;
 		}
 		for (Block block : blocks)
 		{
