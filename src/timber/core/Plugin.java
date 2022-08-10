@@ -19,11 +19,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Plugin extends JavaPlugin implements Listener {
-	public static HashSet<String>	validLogMaterials		= new HashSet<>(Arrays.asList("LOG", "LOG_2", "LEGACY_LOG", "LEGACY_LOG_2", "ACACIA_LOG", "BIRCH_LOG", "DARK_OAK_LOG", "JUNGLE_LOG", "OAK_LOG", "SPRUCE_LOG", "CRIMSON_STEM", "WARPED_STEM"));
-	public static HashSet<String>	validAxeMaterials		= new HashSet<>(Arrays.asList("DIAMOND_AXE", "GOLDEN_AXE", "IRON_AXE", "STONE_AXE", "WOODEN_AXE", "GOLD_AXE", "WOOD_AXE", "NETHERITE_AXE"));
-	public static HashSet<Material>	logMaterials			= new HashSet<>();
-	public static HashSet<Material>	axeMaterials			= new HashSet<>();
-	public static boolean			reverseSneakFunction	= false;
+	public static HashSet<String> validLogMaterials = new HashSet<>(Arrays.asList("LOG", "LOG_2", "LEGACY_LOG", "LEGACY_LOG_2", "ACACIA_LOG", "BIRCH_LOG", "DARK_OAK_LOG", "JUNGLE_LOG", "OAK_LOG", "SPRUCE_LOG", "CRIMSON_STEM", "WARPED_STEM"));
+	public static HashSet<String> validAxeMaterials = new HashSet<>(Arrays.asList("DIAMOND_AXE", "GOLDEN_AXE", "IRON_AXE", "STONE_AXE", "WOODEN_AXE", "GOLD_AXE", "WOOD_AXE", "NETHERITE_AXE"));
+	public static HashSet<Material> logMaterials = new HashSet<>();
+	public static HashSet<Material> axeMaterials = new HashSet<>();
+	public static boolean reverseSneakFunction = false;
 
 	public void initializeHashSets() {
 		for (Material material : Material.values()) {
@@ -51,14 +51,13 @@ public class Plugin extends JavaPlugin implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent e) {
 		Player player = e.getPlayer();
+		System.out.println(player.getItemInHand().getType());
+		System.out.println(e.getBlock().getType());
 		boolean check = reverseSneakFunction == player.isSneaking();
-		if (check)
-		{
-			if (!player.hasPermission("timber.disallow") || player.isOp())
-			{
+		if (check) {
+			if (!player.hasPermission("timber.disallow") || player.isOp()) {
 				ItemStack handStack = player.getInventory().getItemInMainHand();
-				if (axeMaterials.contains(handStack.getType()))
-				{
+				if (axeMaterials.contains(handStack.getType())) {
 					Block block = e.getBlock();
 					if (logMaterials.contains(block.getType())) {
 						cutDownTree(block.getLocation(), player.getGameMode() == GameMode.CREATIVE ? handStack.clone() : handStack);
@@ -68,21 +67,16 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void cutDownTree(Location location, ItemStack handStack) {
+	private static void cutDownTree(Location location, ItemStack handStack) {
 		LinkedList<Block> blocks = new LinkedList<>();
-		for (int i = location.getBlockY(); i < location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ());)
-		{
-			Block found = null;
-			for (double x = location.getBlockX() - 1; x < location.getBlockX() + 1 && found == null; x++) {
-				for (double z = location.getBlockZ() - 1; z < location.getBlockZ() + 1 && found == null; z++) {
-					Location l = location.add(x, 1.0D, z);
-					Block block = l.getBlock();
-					if (logMaterials.contains(block.getType())) found = block;
-				}
+		for (int i = location.getBlockY(); i < location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ()); i++) {
+			Location l = location.add(0.0D, 1.0D, 0.0D);
+			Block block = l.getBlock();
+			if (logMaterials.contains(block.getType())) {
+				blocks.add(l.getBlock());
+			} else {
+				break;
 			}
-			
-			if (found != null) blocks.add(found);
-			else break;
 		}
 		for (Block block : blocks) {
 			if (block.breakNaturally(handStack)) {
@@ -93,7 +87,6 @@ public class Plugin extends JavaPlugin implements Listener {
 				}
 			}
 		}
-		blocks = null;
 	}
 
 }

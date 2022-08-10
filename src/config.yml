@@ -10,6 +10,8 @@ validLogMaterials:
   - JUNGLE_LOG
   - OAK_LOG
   - SPRUCE_LOG
+  - WARPED_STEM
+  - CRIMSON_STEM
 validAxeMaterials:
   - DIAMOND_AXE
   - GOLDEN_AXE
@@ -18,3 +20,4 @@ validAxeMaterials:
   - STONE_AXE
   - WOODEN_AXE
   - WOOD_AXE
+  - NETHERITE_AXE
