@@ -18,7 +18,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@SuppressWarnings("deprecation")
 public class Plugin extends JavaPlugin implements Listener {
 	public static HashSet<String>	validLogMaterials		= new HashSet<>(Arrays.asList("LOG", "LOG_2", "LEGACY_LOG", "LEGACY_LOG_2", "ACACIA_LOG", "BIRCH_LOG", "DARK_OAK_LOG", "JUNGLE_LOG", "OAK_LOG", "SPRUCE_LOG", "CRIMSON_STEM", "WARPED_STEM"));
 	public static HashSet<String>	validAxeMaterials		= new HashSet<>(Arrays.asList("DIAMOND_AXE", "GOLDEN_AXE", "IRON_AXE", "STONE_AXE", "WOODEN_AXE", "GOLD_AXE", "WOOD_AXE", "NETHERITE_AXE"));
@@ -26,16 +25,12 @@ public class Plugin extends JavaPlugin implements Listener {
 	public static HashSet<Material>	axeMaterials			= new HashSet<>();
 	public static boolean			reverseSneakFunction	= false;
 
-	public void initializeHashSets()
-	{
-		for (Material material : Material.values())
-		{
-			if (validLogMaterials.contains(material.name()))
-			{
+	public void initializeHashSets() {
+		for (Material material : Material.values()) {
+			if (validLogMaterials.contains(material.name())) {
 				logMaterials.add(material);
 			}
-			if (validAxeMaterials.contains(material.name()))
-			{
+			if (validAxeMaterials.contains(material.name())) {
 				axeMaterials.add(material);
 			}
 		}
@@ -44,8 +39,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	@Override
-	public void onEnable()
-	{
+	public void onEnable() {
 		saveDefaultConfig();
 		reverseSneakFunction = getConfig().getBoolean("reverseSneakFunction");
 		validLogMaterials = new HashSet<>(getConfig().getStringList("validLogMaterials"));
@@ -55,8 +49,7 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onBlockBreak(BlockBreakEvent e)
-	{
+	public void onBlockBreak(BlockBreakEvent e) {
 		Player player = e.getPlayer();
 		boolean check = reverseSneakFunction == player.isSneaking();
 		if (check)
@@ -67,8 +60,7 @@ public class Plugin extends JavaPlugin implements Listener {
 				if (axeMaterials.contains(handStack.getType()))
 				{
 					Block block = e.getBlock();
-					if (logMaterials.contains(block.getType()))
-					{
+					if (logMaterials.contains(block.getType())) {
 						cutDownTree(block.getLocation(), player.getGameMode() == GameMode.CREATIVE ? handStack.clone() : handStack);
 					}
 				}
@@ -76,8 +68,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void cutDownTree(Location location, ItemStack handStack)
-	{
+	private void cutDownTree(Location location, ItemStack handStack) {
 		LinkedList<Block> blocks = new LinkedList<>();
 		for (int i = location.getBlockY(); i < location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ());)
 		{
@@ -93,13 +84,10 @@ public class Plugin extends JavaPlugin implements Listener {
 			if (found != null) blocks.add(found);
 			else break;
 		}
-		for (Block block : blocks)
-		{
-			if (block.breakNaturally(handStack))
-			{
+		for (Block block : blocks) {
+			if (block.breakNaturally(handStack)) {
 				handStack.setDurability((short) (handStack.getDurability() + 1));
-				if (handStack.getType().getMaxDurability() == handStack.getDurability())
-				{
+				if (handStack.getType().getMaxDurability() == handStack.getDurability()) {
 					handStack.setType(Material.AIR);
 					return;
 				}
