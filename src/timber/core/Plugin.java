@@ -51,8 +51,6 @@ public class Plugin extends JavaPlugin implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent e) {
 		Player player = e.getPlayer();
-		System.out.println(player.getItemInHand().getType());
-		System.out.println(e.getBlock().getType());
 		boolean check = reverseSneakFunction == player.isSneaking();
 		if (check) {
 			if (!player.hasPermission("timber.disallow") || player.isOp()) {
